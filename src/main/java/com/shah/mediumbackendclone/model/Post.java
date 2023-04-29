@@ -11,8 +11,7 @@ public class Post {
     private String title;
     private String Content;
     private String image;
-    private int voteCount;
-    private List<User> voteBy;
+    private List<User> votesBy;
     private List<User> savedBy;
 
     public String getTitle() {
@@ -40,23 +39,26 @@ public class Post {
     }
 
     public int getVoteCount() {
-        return voteCount;
+        return votesBy.size();
+    }
+    public List<User> getVotesBy() {
+        return votesBy;
     }
 
-    public void setVoteCount(int voteCount) {
-        this.voteCount = voteCount;
-    }
-
-    public List<User> getVoteBy() {
-        return voteBy;
-    }
-
-    public void setVoteBy(List<User> voteBy) {
-        this.voteBy = voteBy;
+    public void setVotesBy(List<User> votesBy) {
+        this.votesBy = votesBy;
     }
 
     public List<User> getSavedBy() {
         return savedBy;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public void setSavedBy(List<User> savedBy) {
