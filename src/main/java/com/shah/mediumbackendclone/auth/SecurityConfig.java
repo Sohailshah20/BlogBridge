@@ -1,5 +1,6 @@
 package com.shah.mediumbackendclone.auth;
 
+import com.shah.mediumbackendclone.service.CustomOidcUserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -10,6 +11,13 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+    private CustomOidcUserService oidcUserService;
+
+    public SecurityConfig(CustomOidcUserService oidcUserService) {
+        this.oidcUserService = oidcUserService;
+    }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
@@ -18,7 +26,9 @@ public class SecurityConfig {
                         .requestMatchers("/").permitAll()
                         .anyRequest().authenticated()
                 )
-                .oauth2Login(Customizer.withDefaults());
+                .oauth2Login()
+                .userInfoEndpoint()
+                .oidcUserService(oidcUserService);
         return httpSecurity.build();
     }
 }

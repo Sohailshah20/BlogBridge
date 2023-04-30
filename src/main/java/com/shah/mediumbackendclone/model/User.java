@@ -13,22 +13,35 @@ import java.util.List;
 import java.util.UUID;
 
 @Document(collection = "user")
-public class User{
+public class User {
+    @Id
     private String id;
     private String name;
     private String email;
+    private String bio;
+    private String avatar;
+    private List<String> intrests;
+    private List<User> mutedAuthors;
+    private List<User> followers;
+    private List<User> following;
+    private List<UserList> lists;
+
+    private List<Notification> notifications;
+
+    public List<Notification> getNotifications() {
+        return notifications;
+    }
+
+    public void setNotifications(List<Notification> notifications) {
+        this.notifications = notifications;
+    }
 
     public String getEmail() {
         return email;
     }
-
     public void setEmail(String email) {
         this.email = email;
     }
-
-    private String bio;
-    private String avatar;
-
     public String getId() {
         return id;
     }
@@ -36,14 +49,6 @@ public class User{
     public void setId(String id) {
         this.id = id;
     }
-
-    private String intrests;
-    private List<User> mutedAuthors;
-    private List<User> followers;
-    private List<User> following;
-    private List<UserList> lists;
-
-
     public String getName() {
         return name;
     }
@@ -68,11 +73,11 @@ public class User{
         this.avatar = avatar;
     }
 
-    public String getIntrests() {
+    public List<String> getIntrests() {
         return intrests;
     }
 
-    public void setIntrests(String intrests) {
+    public void setIntrests(List<String> intrests) {
         this.intrests = intrests;
     }
 

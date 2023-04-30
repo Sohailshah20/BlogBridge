@@ -10,20 +10,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
 @SpringBootApplication
-public class MediumBackendCloneApplication implements CommandLineRunner {
+public class MediumBackendCloneApplication  {
 	@Autowired UserRepository userService;
 
 	public static void main(String[] args) {
-
-
-
 		SpringApplication.run(MediumBackendCloneApplication.class, args);
-	}
-
-	@Override
-	public void run(String... args) throws Exception {
-		User user = new User();
-		user.setName("sohail");
-		userService.save(user);
 	}
 }

@@ -17,9 +17,4 @@ public class AuthController {
     public AuthController(UserService userService) {
         this.userService = userService;
     }
-
-    @GetMapping
-    public ResponseApi login(@AuthenticationPrincipal OAuth2User user){
-        return userService.saveUser(user);
-    }
 }
