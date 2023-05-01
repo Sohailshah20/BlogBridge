@@ -1,5 +1,6 @@
 package com.shah.mediumbackendclone.model;
 
+import com.shah.mediumbackendclone.user.User;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;

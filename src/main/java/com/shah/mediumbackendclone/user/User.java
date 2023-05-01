@@ -1,16 +1,10 @@
-package com.shah.mediumbackendclone.model;
+package com.shah.mediumbackendclone.user;
 
-import org.bson.codecs.pojo.annotations.BsonId;
+import com.shah.mediumbackendclone.model.Notification;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.MongoId;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.UUID;
 
 @Document(collection = "user")
 public class User {
@@ -21,9 +15,9 @@ public class User {
     private String bio;
     private String avatar;
     private List<String> intrests;
-    private List<User> mutedAuthors;
-    private List<User> followers;
-    private List<User> following;
+    private List<String> mutedAuthors;
+    private List<String> followers;
+    private List<String> following;
     private List<UserList> lists;
 
     private List<Notification> notifications;
@@ -81,27 +75,27 @@ public class User {
         this.intrests = intrests;
     }
 
-    public List<User> getMutedAuthors() {
+    public List<String> getMutedAuthors() {
         return mutedAuthors;
     }
 
-    public void setMutedAuthors(List<User> mutedAuthors) {
+    public void setMutedAuthors(List<String> mutedAuthors) {
         this.mutedAuthors = mutedAuthors;
     }
 
-    public List<User> getFollowers() {
+    public List<String> getFollowers() {
         return followers;
     }
 
-    public void setFollowers(List<User> followers) {
+    public void setFollowers(List<String> followers) {
         this.followers = followers;
     }
 
-    public List<User> getFollowing() {
+    public List<String> getFollowing() {
         return following;
     }
 
-    public void setFollowing(List<User> following) {
+    public void setFollowing(List<String> following) {
         this.following = following;
     }
 

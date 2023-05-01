@@ -2,12 +2,10 @@ package com.shah.mediumbackendclone.Controller;
 
 import com.shah.mediumbackendclone.model.Notification;
 import com.shah.mediumbackendclone.model.ResponseApi;
-import com.shah.mediumbackendclone.model.User;
-import com.shah.mediumbackendclone.model.UserList;
 import com.shah.mediumbackendclone.service.UserService;
+import com.shah.mediumbackendclone.user.UserDto;
+import com.shah.mediumbackendclone.user.UserList;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,7 +14,7 @@ import java.util.List;
 @RequestMapping(path = "/user", produces = "application/json")
 public class UserController {
 
-    private UserService userService;
+    private final UserService userService;
 
     public UserController(UserService userService) {
         this.userService = userService;
@@ -24,17 +22,17 @@ public class UserController {
 
 
     @GetMapping("/{userId}")
-    public User getUser(@PathVariable String userId) {
+    public ResponseEntity<UserDto> getUser(@PathVariable String userId) {
         return userService.getUser(userId);
     }
 
     @GetMapping("/following/{userId}")
-    public ResponseEntity<List<User>> getFollowings(@PathVariable String userId) {
+    public ResponseEntity<List<String>> getFollowings(@PathVariable String userId) {
         return userService.getFollowings(userId);
     }
 
     @GetMapping("/followers/{userId}")
-    public ResponseEntity<List<User>> getFollowers(@PathVariable String userId) {
+    public ResponseEntity<List<String>> getFollowers(@PathVariable String userId) {
         return userService.getFollowers(userId);
     }
 
@@ -54,7 +52,7 @@ public class UserController {
     }
 
     @DeleteMapping("/delete/userinterest/{userid}")
-    public ResponseEntity<User> deleteUserInterest(
+    public ResponseEntity<List<String>> deleteUserInterest(
             @PathVariable String userId,
             @RequestBody String interest
     ) {
@@ -65,5 +63,22 @@ public class UserController {
     public ResponseApi deleteUser(@PathVariable String userId) {
         return userService.deleteUser(userId);
     }
+
+    @PutMapping("/follow/{userid}")
+    public ResponseEntity<ResponseApi> followUser(
+            @PathVariable String userid,
+            @RequestBody String followingUserId
+    ){
+        return userService.followUser(userid,followingUserId);
+    }
+
+    @PutMapping("/unfollow/{userid}")
+    public ResponseEntity<ResponseApi> unfollowUser(
+            @PathVariable String userid,
+            @RequestBody String followingUserId
+    ){
+        return userService.unfollowUser(userid,followingUserId);
+    }
+
 
 }
