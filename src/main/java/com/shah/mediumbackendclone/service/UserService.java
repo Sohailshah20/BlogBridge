@@ -1,5 +1,6 @@
 package com.shah.mediumbackendclone.service;
 
+import com.shah.mediumbackendclone.model.Post;
 import com.shah.mediumbackendclone.user.UserDto;
 import com.shah.mediumbackendclone.model.Notification;
 import com.shah.mediumbackendclone.model.ResponseApi;
@@ -7,6 +8,7 @@ import com.shah.mediumbackendclone.user.User;
 import com.shah.mediumbackendclone.user.UserDtoMapper;
 import com.shah.mediumbackendclone.user.UserList;
 import com.shah.mediumbackendclone.repository.UserRepository;
+import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -40,8 +42,8 @@ public class UserService {
     }
 
     public ResponseApi deleteUser(String userId) {
-        Optional<User> existingUser = userRepository.findById(userId);
-        if (existingUser.isPresent()) {
+        User user = isUserPresent(userId);
+        if (user != null) {
             try {
 
                 userRepository.deleteById(userId);
@@ -65,10 +67,9 @@ public class UserService {
     }
 
     public ResponseEntity<UserDto> getUser(String userId) {
-        Optional<User> existingUser = userRepository.findById(userId);
-        if (existingUser.isPresent()) {
-            Optional<User> user = userRepository.findById(userId);
-            return ResponseEntity.ok().body(UserDtoMapper.toDto(user.get()));
+        User user = isUserPresent(userId);
+        if (user != null) {
+            return ResponseEntity.ok().body(UserDtoMapper.toDto(user));
         } else {
             return ResponseEntity.notFound().build();
         }
@@ -82,27 +83,26 @@ public class UserService {
             UserDto userDto
 //            List<String> interests
     ) {
-        Optional<User> existingUser = userRepository.findById(userId);
-        if (existingUser.isPresent()) {
-            User user = existingUser.get();
+        User existingUser = isUserPresent(userId);
+        if (existingUser != null) {
 
             String name = userDto.name();
             if (name != null && !name.isEmpty()) {
-                user.setName(name);
+                existingUser.setName(name);
             }
 
             String bio = userDto.bio();
             if (bio != null && !bio.isEmpty()) {
-                user.setBio(bio);
+                existingUser.setBio(bio);
             }
 
             String avatar = userDto.avatar();
             if (avatar != null && !avatar.isEmpty()) {
-                user.setAvatar(avatar);
+                existingUser.setAvatar(avatar);
             }
 
-            userRepository.save(user);
-            return ResponseEntity.ok(UserDtoMapper.toDto(user));
+            userRepository.save(existingUser);
+            return ResponseEntity.ok(UserDtoMapper.toDto(existingUser));
         } else {
             return ResponseEntity.notFound().build();
         }
@@ -110,9 +110,9 @@ public class UserService {
     }
 
     public ResponseEntity<List<String>> getFollowings(String userId) {
-        Optional<User> user = userRepository.findById(userId);
-        if (user.isPresent()) {
-            List<String> following = user.get().getFollowing();
+        User user = isUserPresent(userId);
+        if (user != null) {
+            List<String> following = user.getFollowing();
             return ResponseEntity.ok(following);
         } else {
             return ResponseEntity.notFound().build();
@@ -120,9 +120,9 @@ public class UserService {
     }
 
     public ResponseEntity<List<String>> getFollowers(String userId) {
-        Optional<User> user = userRepository.findById(userId);
-        if (user.isPresent()) {
-            List<String> followers = user.get().getFollowers();
+        User user = isUserPresent(userId);
+        if (user != null) {
+            List<String> followers = user.getFollowers();
             return ResponseEntity.ok(followers);
         } else {
             return ResponseEntity.notFound().build();
@@ -130,9 +130,9 @@ public class UserService {
     }
 
     public ResponseEntity<List<Notification>> getNotifications(String userId) {
-        Optional<User> user = userRepository.findById(userId);
-        if (user.isPresent()) {
-            List<Notification> notifications = user.get().getNotifications();
+        User user = isUserPresent(userId);
+        if (user != null) {
+            List<Notification> notifications = user.getNotifications();
             return ResponseEntity.ok(notifications);
         } else {
             return ResponseEntity.notFound().build();
@@ -140,9 +140,9 @@ public class UserService {
     }
 
     public ResponseEntity<List<String>> getInterest(String userId) {
-        Optional<User> user = userRepository.findById(userId);
-        if (user.isPresent()) {
-            List<String> interest = user.get().getIntrests();
+        User user = isUserPresent(userId);
+        if (user != null) {
+            List<String> interest = user.getIntrests();
             return ResponseEntity.ok(interest);
         } else {
             return ResponseEntity.notFound().build();
@@ -150,9 +150,9 @@ public class UserService {
     }
 
     public ResponseEntity<List<UserList>> getUserLists(String userId) {
-        Optional<User> user = userRepository.findById(userId);
-        if (user.isPresent()) {
-            List<UserList> userLists = user.get().getLists();
+        User user = isUserPresent(userId);
+        if (user != null) {
+            List<UserList> userLists = user.getLists();
             return ResponseEntity.ok(userLists);
         } else {
             return ResponseEntity.notFound().build();
@@ -160,51 +160,71 @@ public class UserService {
     }
 
     public ResponseEntity<List<String>> deleteUserInterest(String userId, String interest) {
-        Optional<User> user = userRepository.findById(userId);
-        if (user.isPresent()) {
-            List<String> updatedInterests = user.get().getIntrests().stream()
+        User user = isUserPresent(userId);
+        if (user != null) {
+            List<String> updatedInterests = user.getIntrests().stream()
                     .filter(str -> !str.equals(interest))
                     .toList();
-            user.get().setIntrests(updatedInterests);
-            userRepository.save(user.get());
+            user.setIntrests(updatedInterests);
+            userRepository.save(user);
             return ResponseEntity.ok().body(updatedInterests);
         } else {
             return ResponseEntity.notFound().build();
         }
     }
 
-    public ResponseEntity<ResponseApi> followUser(String userId, String followingUserId){
-        Optional<User> user = userRepository.findById(userId);
-        if (user.isPresent()) {
-            List<String> following = user.get().getFollowing();
+    public ResponseEntity<ResponseApi> followUser(String userId, String followingUserId) {
+        User user = isUserPresent(userId);
+        if (user != null) {
+            List<String> following = user.getFollowing();
             following.add(followingUserId);
-            user.get().setFollowing(following);
-            userRepository.save(user.get());
+            user.setFollowing(following);
+            userRepository.save(user);
             return ResponseEntity.ok(new ResponseApi(
                     "user followed",
                     true
             ));
-        }else {
+        } else {
             return ResponseEntity.notFound().build();
         }
     }
 
-    public ResponseEntity<ResponseApi> unfollowUser(String userId, String followingUserId){
-        Optional<User> user = userRepository.findById(userId);
-        if (user.isPresent()) {
-            List<String> following = user.get().getFollowing();
+    public ResponseEntity<ResponseApi> unfollowUser(String userId, String followingUserId) {
+        User user = isUserPresent(userId);
+        if (user != null) {
+            List<String> following = user.getFollowing();
             following.remove(followingUserId);
-            user.get().setFollowing(following);
-            userRepository.save(user.get());
+            user.setFollowing(following);
+            userRepository.save(user);
             return ResponseEntity.ok(new ResponseApi(
                     "user unfollowed",
                     true
             ));
-        }else {
+        } else {
             return ResponseEntity.notFound().build();
         }
     }
 
+    public ResponseApi updateUserLists(User user) {
+        try {
+            userRepository.save(user);
+            return new ResponseApi(
+                    "user list updated",
+                    true
+            );
+        }catch (Exception e){
+            return new ResponseApi(
+                    e.getMessage(),
+                    false
+            );
+        }
+
+    }
+
+    public User isUserPresent(String userId){
+        Optional<User> user = userRepository.findById(userId);
+        return user.orElse(null);
+    }
 
 
 }

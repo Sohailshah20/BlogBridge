@@ -1,6 +1,5 @@
 package com.shah.mediumbackendclone.user;
 
-import com.shah.mediumbackendclone.model.Post;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
@@ -8,7 +7,7 @@ import java.util.List;
 @Document
 public class UserList {
     private String name;
-    private List<Post> posts;
+    private List<String> postId;
     private String image;
 
     public String getName() {
@@ -19,12 +18,12 @@ public class UserList {
         this.name = name;
     }
 
-    public List<Post> getPosts() {
-        return posts;
+    public List<String> getPostId() {
+        return postId;
     }
 
-    public void setPosts(List<Post> posts) {
-        this.posts = posts;
+    public void setPostId(List<String> postId) {
+        this.postId = postId;
     }
 
     public String getImage() {

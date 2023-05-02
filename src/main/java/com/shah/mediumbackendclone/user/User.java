@@ -19,7 +19,6 @@ public class User {
     private List<String> followers;
     private List<String> following;
     private List<UserList> lists;
-
     private List<Notification> notifications;
 
     public List<Notification> getNotifications() {
