@@ -8,7 +8,6 @@ import com.shah.mediumbackendclone.user.User;
 import com.shah.mediumbackendclone.user.UserList;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -18,12 +17,10 @@ import java.util.regex.Pattern;
 public class PostService {
 
     private PostRepository postRepository;
-    private UserRepository userRepository;
     private UserService userService;
 
     public PostService(PostRepository postRepository, UserRepository userRepository, UserService userService) {
         this.postRepository = postRepository;
-        this.userRepository = userRepository;
         this.userService = userService;
     }
 
@@ -98,29 +95,13 @@ public class PostService {
 
     }
 
-    public ResponseApi savePost(String userId, String postId, String listName) {
-        Optional<Post> existingPost = postRepository.findById(postId);
-        Optional<User> user = userRepository.findById(userId);
-        if (existingPost.isPresent() && user.isPresent()) {
-            List<UserList> userLists = userService.getUserLists(userId).getBody();
-            if (userLists != null && !userLists.isEmpty()) {
-                UserList userlist = userLists.stream().filter(ul -> ul.getName().equals(listName)).findFirst().get();
-                List<String> posts = userlist.getPostId();
-                posts.add(postId);
-                userLists.add(userlist);
-                user.get().setLists(userLists);
-                return userService.updateUserLists(user.get());
-            }
+    public ResponseEntity<List<UserList>> getAllSavedLists(String userid){
+        User userPresent = userService.isUserPresent(userid);
+        if (userPresent != null){
+            return ResponseEntity.ok(userPresent.getLists());
         }else {
-            return new ResponseApi(
-                    "Can't save the post right now",
-                    false
-            );
+            return ResponseEntity.notFound().build();
         }
-        return new ResponseApi(
-                "Can't save the post right now",
-                false
-        );
     }
 
     //This function does not special
@@ -137,8 +118,6 @@ public class PostService {
         post.setImage(imgUrl);
         post.setSummary(summary);
         return post;
-
-
     }
 
 }

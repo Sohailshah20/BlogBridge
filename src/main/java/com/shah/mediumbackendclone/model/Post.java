@@ -17,8 +17,17 @@ public class Post {
     private String Summary;
     private String image;
     private String markdown;
+    private List<Comment> comments;
     private List<String> votesBy;
     private List<String> savedBy;
+
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
+    }
 
     public String getMarkdown() {
         return markdown;
