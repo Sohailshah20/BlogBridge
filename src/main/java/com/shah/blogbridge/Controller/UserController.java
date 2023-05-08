@@ -1,12 +1,14 @@
-package com.shah.mediumbackendclone.Controller;
+package com.shah.blogbridge.Controller;
 
-import com.shah.mediumbackendclone.model.Comment;
-import com.shah.mediumbackendclone.model.Notification;
-import com.shah.mediumbackendclone.model.ResponseApi;
-import com.shah.mediumbackendclone.service.PostInteractionService;
-import com.shah.mediumbackendclone.service.UserService;
-import com.shah.mediumbackendclone.user.UserDto;
-import com.shah.mediumbackendclone.user.UserList;
+import com.shah.blogbridge.model.Comment;
+import com.shah.blogbridge.model.Notification;
+import com.shah.blogbridge.model.Post;
+import com.shah.blogbridge.model.ResponseApi;
+import com.shah.blogbridge.service.PostInteractionService;
+import com.shah.blogbridge.service.PostService;
+import com.shah.blogbridge.service.UserService;
+import com.shah.blogbridge.user.UserDto;
+import com.shah.blogbridge.user.UserList;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,10 +19,12 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+    private final PostService postService;
     private final PostInteractionService postInteractionService;
 
-    public UserController(UserService userService, PostInteractionService postInteractionService) {
+    public UserController(UserService userService, PostService postService, PostInteractionService postInteractionService) {
         this.userService = userService;
+        this.postService = postService;
         this.postInteractionService = postInteractionService;
     }
 
@@ -141,6 +145,9 @@ public class UserController {
         return postInteractionService.unSavePostFromUserList(userIdId,postId,listName);
     }
 
-
+    @GetMapping("/myposts/{userId}")
+    public ResponseEntity<List<Post>> getMyPosts(@PathVariable String userId){
+        return postService.getMyPosts(userId);
+    }
 
 }

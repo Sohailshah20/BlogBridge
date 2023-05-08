@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.shah</groupId>
-	<artifactId>medium-backend-clone</artifactId>
+	<artifactId>blogbridge</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>medium-backend-clone</name>
-	<description>Medium Backend Application using spring boot</description>
+	<name>blogbridge</name>
+	<description>An Article sharing Application using spring boot</description>
 	<properties>
 		<java.version>17</java.version>
 	</properties>

@@ -1,10 +1,10 @@
-package com.shah.mediumbackendclone;
+package com.shah.blogbridge;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class MediumBackendCloneApplicationTests {
+class BlogBridgeApplicationTests {
 
 	@Test
 	void contextLoads() {

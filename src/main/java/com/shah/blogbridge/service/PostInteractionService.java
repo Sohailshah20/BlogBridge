@@ -1,10 +1,10 @@
-package com.shah.mediumbackendclone.service;
+package com.shah.blogbridge.service;
 
-import com.shah.mediumbackendclone.model.Comment;
-import com.shah.mediumbackendclone.model.Post;
-import com.shah.mediumbackendclone.model.ResponseApi;
-import com.shah.mediumbackendclone.user.User;
-import com.shah.mediumbackendclone.user.UserList;
+import com.shah.blogbridge.model.Comment;
+import com.shah.blogbridge.model.Post;
+import com.shah.blogbridge.model.ResponseApi;
+import com.shah.blogbridge.user.User;
+import com.shah.blogbridge.user.UserList;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
@@ -27,6 +27,7 @@ public class PostInteractionService {
         if (user != null && post != null) {
             List<String> votesBy = post.getVotesBy();
             votesBy.add(userId);
+            post.setVoteCount(votesBy.size());
             post.setVotesBy(votesBy);
             postService.updatePost(post.getOwnerId(), post);
             return ResponseEntity.ok(post.getVoteCount());
@@ -41,6 +42,7 @@ public class PostInteractionService {
         if (user != null && post != null) {
             List<String> votesBy = post.getVotesBy();
             votesBy.remove(userId);
+            post.setVoteCount(votesBy.size());
             post.setVotesBy(votesBy);
             postService.updatePost(post.getOwnerId(), post);
             return ResponseEntity.ok(post.getVoteCount());
@@ -124,12 +126,7 @@ public class PostInteractionService {
     }
 
 
-    //explore
-    //morefrom
-    //suggest posts
     //suggest topics
     //get topic posts
-    //home posts
-    //get user posts
 
 }

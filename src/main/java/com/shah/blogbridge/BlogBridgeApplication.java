@@ -1,15 +1,15 @@
-package com.shah.mediumbackendclone;
+package com.shah.blogbridge;
 
-import com.shah.mediumbackendclone.repository.UserRepository;
+import com.shah.blogbridge.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class MediumBackendCloneApplication  {
+public class BlogBridgeApplication {
 	@Autowired UserRepository userService;
 
 	public static void main(String[] args) {
-		SpringApplication.run(MediumBackendCloneApplication.class, args);
+		SpringApplication.run(BlogBridgeApplication.class, args);
 	}
 }

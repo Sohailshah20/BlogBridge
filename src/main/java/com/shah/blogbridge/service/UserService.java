@@ -1,14 +1,12 @@
-package com.shah.mediumbackendclone.service;
+package com.shah.blogbridge.service;
 
-import com.shah.mediumbackendclone.model.Post;
-import com.shah.mediumbackendclone.user.UserDto;
-import com.shah.mediumbackendclone.model.Notification;
-import com.shah.mediumbackendclone.model.ResponseApi;
-import com.shah.mediumbackendclone.user.User;
-import com.shah.mediumbackendclone.user.UserDtoMapper;
-import com.shah.mediumbackendclone.user.UserList;
-import com.shah.mediumbackendclone.repository.UserRepository;
-import org.apache.coyote.Response;
+import com.shah.blogbridge.user.UserDto;
+import com.shah.blogbridge.model.Notification;
+import com.shah.blogbridge.model.ResponseApi;
+import com.shah.blogbridge.user.User;
+import com.shah.blogbridge.user.UserDtoMapper;
+import com.shah.blogbridge.user.UserList;
+import com.shah.blogbridge.repository.UserRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 

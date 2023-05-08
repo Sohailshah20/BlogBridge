@@ -1,6 +1,6 @@
-package com.shah.mediumbackendclone.user;
+package com.shah.blogbridge.user;
 
-import com.shah.mediumbackendclone.model.Notification;
+import com.shah.blogbridge.model.Notification;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 

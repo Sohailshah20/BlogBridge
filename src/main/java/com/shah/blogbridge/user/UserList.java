@@ -1,4 +1,4 @@
-package com.shah.mediumbackendclone.user;
+package com.shah.blogbridge.user;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 

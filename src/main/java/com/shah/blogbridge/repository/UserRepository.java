@@ -1,6 +1,6 @@
-package com.shah.mediumbackendclone.repository;
+package com.shah.blogbridge.repository;
 
-import com.shah.mediumbackendclone.user.User;
+import com.shah.blogbridge.user.User;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 

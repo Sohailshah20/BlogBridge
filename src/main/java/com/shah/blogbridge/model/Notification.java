@@ -1,4 +1,4 @@
-package com.shah.mediumbackendclone.model;
+package com.shah.blogbridge.model;
 
 import java.time.LocalDateTime;
 

@@ -1,13 +1,15 @@
-package com.shah.mediumbackendclone.service;
+package com.shah.blogbridge.service;
 
-import com.shah.mediumbackendclone.model.Post;
-import com.shah.mediumbackendclone.model.ResponseApi;
-import com.shah.mediumbackendclone.repository.PostRepository;
-import com.shah.mediumbackendclone.repository.UserRepository;
-import com.shah.mediumbackendclone.user.User;
-import com.shah.mediumbackendclone.user.UserList;
+import com.shah.blogbridge.model.Post;
+import com.shah.blogbridge.model.ResponseApi;
+import com.shah.blogbridge.repository.PostRepository;
+import com.shah.blogbridge.repository.UserRepository;
+import com.shah.blogbridge.user.User;
+import com.shah.blogbridge.user.UserList;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -16,8 +18,8 @@ import java.util.regex.Pattern;
 @Service
 public class PostService {
 
-    private PostRepository postRepository;
-    private UserService userService;
+    private final PostRepository postRepository;
+    private final UserService userService;
 
     public PostService(PostRepository postRepository, UserRepository userRepository, UserService userService) {
         this.postRepository = postRepository;
@@ -28,6 +30,15 @@ public class PostService {
         Optional<Post> post = postRepository.findById(postId);
         if (post.isPresent()) {
             return ResponseEntity.ok().body(post.get());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    public ResponseEntity<List<Post>> getMyPosts(String userId) {
+        List<Post> posts = postRepository.findAllByOwnerIdOrderByTimeStampDesc(userId);
+        if (!posts.isEmpty()) {
+            return ResponseEntity.ok(posts);
         } else {
             return ResponseEntity.notFound().build();
         }
@@ -50,9 +61,8 @@ public class PostService {
         } else {
             return ResponseEntity.badRequest().build();
         }
-        //image can be null
-        String image = post.getImage();
-
+        newPost.setTimeStamp(LocalDateTime.now());
+        Post structuredPost = structurePost(post);
         postRepository.save(newPost);
         return ResponseEntity.ok().body(newPost);
     }
@@ -95,11 +105,11 @@ public class PostService {
 
     }
 
-    public ResponseEntity<List<UserList>> getAllSavedLists(String userid){
+    public ResponseEntity<List<UserList>> getAllSavedLists(String userid) {
         User userPresent = userService.isUserPresent(userid);
-        if (userPresent != null){
+        if (userPresent != null) {
             return ResponseEntity.ok(userPresent.getLists());
-        }else {
+        } else {
             return ResponseEntity.notFound().build();
         }
     }

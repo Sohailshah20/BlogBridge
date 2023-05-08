@@ -1,6 +1,6 @@
-package com.shah.mediumbackendclone.service;
+package com.shah.blogbridge.service;
 
-import com.shah.mediumbackendclone.user.User;
+import com.shah.blogbridge.user.User;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;

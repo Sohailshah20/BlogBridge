@@ -1,9 +1,9 @@
-package com.shah.mediumbackendclone.Controller;
+package com.shah.blogbridge.Controller;
 
-import com.shah.mediumbackendclone.model.Post;
-import com.shah.mediumbackendclone.model.ResponseApi;
-import com.shah.mediumbackendclone.service.PostService;
-import com.shah.mediumbackendclone.user.UserList;
+import com.shah.blogbridge.model.Post;
+import com.shah.blogbridge.model.ResponseApi;
+import com.shah.blogbridge.service.PostService;
+import com.shah.blogbridge.user.UserList;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

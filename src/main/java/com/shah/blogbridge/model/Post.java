@@ -1,9 +1,9 @@
-package com.shah.mediumbackendclone.model;
+package com.shah.blogbridge.model;
 
-import com.shah.mediumbackendclone.user.User;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Document(collection = "post")
@@ -19,7 +19,19 @@ public class Post {
     private String markdown;
     private List<Comment> comments;
     private List<String> votesBy;
+
+    private int voteCount;
+
     private List<String> savedBy;
+    LocalDateTime timeStamp;
+
+    public LocalDateTime getTimeStamp() {
+        return timeStamp;
+    }
+
+    public void setTimeStamp(LocalDateTime timeStamp) {
+        this.timeStamp = timeStamp;
+    }
 
     public List<Comment> getComments() {
         return comments;
@@ -77,7 +89,10 @@ public class Post {
     }
 
     public int getVoteCount() {
-        return votesBy.size();
+        return voteCount;
+    }
+    public void setVoteCount(int voteCount) {
+        this.voteCount = voteCount;
     }
     public List<String> getVotesBy() {
         return votesBy;
