@@ -3,49 +3,67 @@ package com.shah.blogbridge.service;
 import com.shah.blogbridge.model.Comment;
 import com.shah.blogbridge.model.Post;
 import com.shah.blogbridge.model.ResponseApi;
+import com.shah.blogbridge.repository.PostRepository;
 import com.shah.blogbridge.user.User;
 import com.shah.blogbridge.user.UserList;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class PostInteractionService {
 
     private final PostService postService;
+
+    private final PostRepository postRepository;
     private final UserService userService;
 
-    public PostInteractionService(PostService postService, UserService userService) {
+    public PostInteractionService(PostService postService, PostRepository postRepository, UserService userService) {
         this.postService = postService;
+        this.postRepository = postRepository;
         this.userService = userService;
     }
 
-    public ResponseEntity<Integer> vote(String postId, String userId) {
+    public ResponseEntity<String> vote(String postId, String userId) {
         Post post = postService.getPost(postId).getBody();
         User user = userService.isUserPresent(userId);
         if (user != null && post != null) {
             List<String> votesBy = post.getVotesBy();
-            votesBy.add(userId);
-            post.setVoteCount(votesBy.size());
-            post.setVotesBy(votesBy);
-            postService.updatePost(post.getOwnerId(), post);
-            return ResponseEntity.ok(post.getVoteCount());
+            if (votesBy == null) {
+                votesBy = new ArrayList<>();
+            }
+            if (!votesBy.contains(userId)) {
+                votesBy.add(userId);
+                post.setVoteCount(votesBy.size());
+                post.setVotesBy(votesBy);
+                postRepository.save(post);
+                return ResponseEntity.ok(String.valueOf(post.getVoteCount()));
+            }else {
+                return ResponseEntity.badRequest().body("user has already liked the post");
+            }
         } else {
             return ResponseEntity.notFound().build();
         }
     }
 
-    public ResponseEntity<Integer> unVote(String postId, String userId) {
+    public ResponseEntity<String> unVote(String postId, String userId) {
         Post post = postService.getPost(postId).getBody();
         User user = userService.isUserPresent(userId);
         if (user != null && post != null) {
             List<String> votesBy = post.getVotesBy();
-            votesBy.remove(userId);
-            post.setVoteCount(votesBy.size());
-            post.setVotesBy(votesBy);
-            postService.updatePost(post.getOwnerId(), post);
-            return ResponseEntity.ok(post.getVoteCount());
+            if (votesBy.contains(userId)) {
+                votesBy.remove(userId);
+                post.setVoteCount(votesBy.size());
+                post.setVotesBy(votesBy);
+                postRepository.save(post);
+                return ResponseEntity.ok(String.valueOf(post.getVoteCount()));
+            } else {
+                return ResponseEntity.notFound().build();
+
+            }
         } else {
             return ResponseEntity.notFound().build();
         }
@@ -65,10 +83,13 @@ public class PostInteractionService {
         User user = userService.isUserPresent(comment.getUserId());
         if (post != null && user != null) {
             List<Comment> comments = post.getComments();
+            if (comments == null){
+                comments = new ArrayList<>();
+            }
             comment.setTimeStamp(LocalDateTime.now());
             comments.add(comment);
             post.setComments(comments);
-           postService.updatePost(post.getOwnerId(), post);
+            postRepository.save(post);
             return ResponseEntity.ok(comments);
         } else {
             return ResponseEntity.notFound().build();
@@ -88,7 +109,7 @@ public class PostInteractionService {
                 user.setLists(userLists);
                 return userService.updateUserLists(user);
             }
-        }else {
+        } else {
             return new ResponseApi(
                     "Can't save the post right now",
                     false
@@ -113,7 +134,7 @@ public class PostInteractionService {
                 user.setLists(userLists);
                 return userService.updateUserLists(user);
             }
-        }else {
+        } else {
             return new ResponseApi(
                     "Can't save the post right now",
                     false

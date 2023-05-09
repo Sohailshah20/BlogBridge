@@ -83,7 +83,7 @@ public class UserController {
     @PutMapping("/follow/{userid}")
     public ResponseEntity<ResponseApi> followUser(
             @PathVariable String userid,
-            @RequestBody String followingUserId
+            @RequestParam("followingUserId") String followingUserId
     ) {
         return userService.followUser(userid, followingUserId);
     }
@@ -91,23 +91,23 @@ public class UserController {
     @PutMapping("/unfollow/{userid}")
     public ResponseEntity<ResponseApi> unfollowUser(
             @PathVariable String userid,
-            @RequestBody String followingUserId
+            @RequestParam("followingUserId") String followingUserId
     ) {
         return userService.unfollowUser(userid, followingUserId);
     }
 
-    @PutMapping("/vote/{userId}/{postId}")
-    public ResponseEntity<Integer> votePost(
-            @PathVariable String userId,
-            @PathVariable String postId
+    @PutMapping("/vote/{postId}")
+    public ResponseEntity<String> votePost(
+            @PathVariable String postId,
+            @RequestParam("userId") String userId
     ) {
         return postInteractionService.vote(postId, userId);
     }
 
-    @PutMapping("/unvote/{userId}/{postId}")
-    public ResponseEntity<Integer> unVotePost(
-            @PathVariable String userId,
-            @PathVariable String postId
+    @PutMapping("/unvote/{postId}")
+    public ResponseEntity<String> unVotePost(
+            @PathVariable String postId,
+            @RequestParam("userId") String userId
     ) {
         return postInteractionService.unVote(postId, userId);
     }

@@ -13,10 +13,9 @@ public class Post {
     private String postId;
     private String ownerId;
     private String title;
-    private String Content;
     private String Summary;
     private String image;
-    private String markdown;
+    private List<String> tags;
     private List<Comment> comments;
     private List<String> votesBy;
 
@@ -24,6 +23,14 @@ public class Post {
 
     private List<String> savedBy;
     LocalDateTime timeStamp;
+
+    public List<String> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<String> tags) {
+        this.tags = tags;
+    }
 
     public LocalDateTime getTimeStamp() {
         return timeStamp;
@@ -40,14 +47,6 @@ public class Post {
     public void setComments(List<Comment> comments) {
         this.comments = comments;
     }
-
-    public String getMarkdown() {
-        return markdown;
-    }
-    public void setMarkdown(String markdown) {
-        this.markdown = markdown;
-    }
-
     public String getSummary() {
         return Summary;
     }
@@ -70,14 +69,6 @@ public class Post {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public String getContent() {
-        return Content;
-    }
-
-    public void setContent(String content) {
-        Content = content;
     }
 
     public String getImage() {

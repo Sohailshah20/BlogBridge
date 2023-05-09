@@ -1,20 +1,26 @@
 package com.shah.blogbridge.service;
 
-import com.shah.blogbridge.user.UserDto;
 import com.shah.blogbridge.model.Notification;
 import com.shah.blogbridge.model.ResponseApi;
+import com.shah.blogbridge.repository.UserRepository;
 import com.shah.blogbridge.user.User;
+import com.shah.blogbridge.user.UserDto;
 import com.shah.blogbridge.user.UserDtoMapper;
 import com.shah.blogbridge.user.UserList;
-import com.shah.blogbridge.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class UserService {
+
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+
 
     private final UserRepository userRepository;
 
@@ -172,9 +178,13 @@ public class UserService {
     }
 
     public ResponseEntity<ResponseApi> followUser(String userId, String followingUserId) {
+        logger.trace(followingUserId.toString());
         User user = isUserPresent(userId);
         if (user != null) {
             List<String> following = user.getFollowing();
+            if (following == null){
+                following = new ArrayList<>();
+            }
             following.add(followingUserId);
             user.setFollowing(following);
             userRepository.save(user);

@@ -1,6 +1,7 @@
 package com.shah.blogbridge.service;
 
 import com.shah.blogbridge.model.Post;
+import com.shah.blogbridge.model.PostUpdateRequest;
 import com.shah.blogbridge.model.ResponseApi;
 import com.shah.blogbridge.repository.PostRepository;
 import com.shah.blogbridge.repository.UserRepository;
@@ -10,8 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -44,38 +44,46 @@ public class PostService {
         }
     }
 
-    public ResponseEntity<Post> savePost(String userId, Post post) {
+    public ResponseEntity<Post> savePost(String userId, String title, String tags, String markdown) {
         Post newPost = new Post();
         newPost.setOwnerId(userId);
-
-        String title = post.getTitle();
         if (title != null && !title.isEmpty()) {
             newPost.setTitle(title);
         } else {
             return ResponseEntity.badRequest().build();
         }
-
-        String content = post.getContent();
-        if (content != null && !content.isEmpty()) {
-            newPost.setContent(content);
-        } else {
-            return ResponseEntity.badRequest().build();
+        if (tags != null && !tags.isEmpty()) {
+            List<String> tagsList = Arrays.stream(tags.split(",")).toList();
+            newPost.setTags(tagsList);
+        }
+        if (markdown != null && !markdown.isEmpty()) {
+            Map<String, String> stringStringMap = structurePost(markdown);
+            newPost.setImage(stringStringMap.get("imgUri"));
+            newPost.setSummary(stringStringMap.get("summary"));
         }
         newPost.setTimeStamp(LocalDateTime.now());
-        Post structuredPost = structurePost(post);
         postRepository.save(newPost);
         return ResponseEntity.ok().body(newPost);
     }
 
-    public ResponseEntity<Post> updatePost(String userId, Post post) {
+    public ResponseEntity<Post> updatePost(String userId, PostUpdateRequest post) {
         Optional<Post> existingPost = postRepository
                 .findById(post.getPostId());
         if (existingPost.isPresent()) {
             if (!existingPost.get().getOwnerId().equals(userId)) {
-                ResponseEntity.badRequest().build();
+                return ResponseEntity.badRequest().build();
             }
-            Post structuredPost = structurePost(post);
-            return savePost(userId, structuredPost);
+            String tags = post.getTags();
+            if (tags != null && !tags.isEmpty()) {
+                List<String> tagsList = Arrays.stream(tags.split(",")).toList();
+                existingPost.get().setTags(tagsList);
+            }
+            Map<String, String> stringStringMap = structurePost(post.getMarkdown());
+            existingPost.get().setTitle(post.getTitle());
+            existingPost.get().setImage(stringStringMap.get("imgUri"));
+            existingPost.get().setSummary(stringStringMap.get("summary"));
+            postRepository.save(existingPost.get());
+            return ResponseEntity.ok(existingPost.get());
         } else {
             return ResponseEntity.badRequest().build();
         }
@@ -116,18 +124,23 @@ public class PostService {
 
     //This function does not special
     //It just sets the image and summary in the post
-    private Post structurePost(Post post) {
-        String test = post.getMarkdown() != null ? post.getMarkdown() : "";
-        Pattern codeRegex = Pattern.compile("<code>(.*?)<\\/code>", Pattern.DOTALL);
-        String withoutCode = codeRegex.matcher(test).replaceAll("");
-        Pattern imgRegex = Pattern.compile("<img.*?src=['\"](.*?)['\"]", Pattern.DOTALL);
-        Matcher matcher = imgRegex.matcher(test);
+    private Map<String, String> structurePost(String markdwon) {
+        Map<String, String> map = new HashMap<>();
+        //Image matcher
+        Pattern imgRegex = Pattern.compile("<img\\\\s+src=\"([^\"]+)\"\\\\s*/>");
+        Matcher matcher = imgRegex.matcher(markdwon);
         String imgUrl = matcher.find() ? matcher.group(1) : null;
+        map.put("imageUri", imgUrl);
+
+        //summary matcher
+        Pattern codeRegex = Pattern.compile("<code>(.*?)</code>", Pattern.DOTALL);
+        String withoutCode = codeRegex.matcher(markdwon).replaceAll("");
         Pattern htmlRegexG = Pattern.compile("<(?:\"[^\"]*\"['\"]*|'[^']*'['\"]*|[^'\">])+>", Pattern.DOTALL);
         String summary = htmlRegexG.matcher(withoutCode).replaceAll("");
-        post.setImage(imgUrl);
-        post.setSummary(summary);
-        return post;
+
+
+        map.put("summary", summary);
+        return map;
     }
 
 }
