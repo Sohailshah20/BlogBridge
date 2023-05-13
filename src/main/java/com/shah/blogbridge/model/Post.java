@@ -15,13 +15,21 @@ public class Post {
     private String title;
     private String Summary;
     private String image;
+    private String markdown;
+
+    public String getMarkdown() {
+        return markdown;
+    }
+
+    public void setMarkdown(String markdown) {
+        this.markdown = markdown;
+    }
+
     private List<String> tags;
     private List<Comment> comments;
     private List<String> votesBy;
 
     private int voteCount;
-
-    private List<String> savedBy;
     LocalDateTime timeStamp;
 
     public List<String> getTags() {
@@ -93,19 +101,11 @@ public class Post {
         this.votesBy = votesBy;
     }
 
-    public List<String> getSavedBy() {
-        return savedBy;
-    }
-
     public String getPostId() {
         return postId;
     }
 
     public void setPostId(String postId) {
         this.postId = postId;
-    }
-
-    public void setSavedBy(List<String> savedBy) {
-        this.savedBy = savedBy;
     }
 }

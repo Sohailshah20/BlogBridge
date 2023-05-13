@@ -57,6 +57,7 @@ public class PostService {
             newPost.setTags(tagsList);
         }
         if (markdown != null && !markdown.isEmpty()) {
+            newPost.setMarkdown(markdown);
             Map<String, String> stringStringMap = structurePost(markdown);
             newPost.setImage(stringStringMap.get("imgUri"));
             newPost.setSummary(stringStringMap.get("summary"));

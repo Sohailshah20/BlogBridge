@@ -11,7 +11,10 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class PostInteractionService {
@@ -41,7 +44,7 @@ public class PostInteractionService {
                 post.setVotesBy(votesBy);
                 postRepository.save(post);
                 return ResponseEntity.ok(String.valueOf(post.getVoteCount()));
-            }else {
+            } else {
                 return ResponseEntity.badRequest().body("user has already liked the post");
             }
         } else {
@@ -83,7 +86,7 @@ public class PostInteractionService {
         User user = userService.isUserPresent(comment.getUserId());
         if (post != null && user != null) {
             List<Comment> comments = post.getComments();
-            if (comments == null){
+            if (comments == null) {
                 comments = new ArrayList<>();
             }
             comment.setTimeStamp(LocalDateTime.now());
@@ -101,19 +104,43 @@ public class PostInteractionService {
         User user = userService.isUserPresent(userId);
         if (existingPost != null && user != null) {
             List<UserList> userLists = userService.getUserLists(userId).getBody();
-            if (userLists != null && !userLists.isEmpty()) {
-                UserList userlist = userLists.stream().filter(ul -> ul.getName().equals(listName)).findFirst().get();
-                List<String> posts = userlist.getPostId();
-                posts.add(postId);
-                userLists.add(userlist);
+            if (userLists == null) {
+                UserList defaultList = new UserList();
+                defaultList.setName("My List");
+                defaultList.setPostId(Collections.singleton(postId));
+                user.setLists(Collections.singletonList(defaultList));
+                return userService.updateUserLists(user);
+            } else {
+                boolean isFound = false;
+                if (listName != null) {
+                    for (UserList userlist : userLists) {
+                        if (userlist.getName().equals(listName)) {
+                            Set<String> list = userlist.getPostId();
+                            list.add(postId);
+                            isFound = true;
+                            break;
+                        }
+                    }
+                } else {
+                    UserList defaultList = userLists.stream()
+                            .filter(ul -> ul.getName().equals("My List"))
+                            .findFirst()
+                            .get();
+                    if (defaultList != null) {
+                        Set<String> list = defaultList.getPostId();
+                        list.add(postId);
+                        isFound = true;
+                    }
+                }
+                if (!isFound && listName != null) {
+                    UserList list = new UserList();
+                    list.setName(listName);
+                    list.setPostId(Collections.singleton(postId));
+                    userLists.add(list);
+                }
                 user.setLists(userLists);
                 return userService.updateUserLists(user);
             }
-        } else {
-            return new ResponseApi(
-                    "Can't save the post right now",
-                    false
-            );
         }
         return new ResponseApi(
                 "Can't save the post right now",
@@ -127,11 +154,43 @@ public class PostInteractionService {
         if (existingPost != null && user != null) {
             List<UserList> userLists = userService.getUserLists(userId).getBody();
             if (userLists != null && !userLists.isEmpty()) {
-                UserList userlist = userLists.stream().filter(ul -> ul.getName().equals(listName)).findFirst().get();
-                List<String> posts = userlist.getPostId();
-                posts.remove(postId);
-                userLists.add(userlist);
-                user.setLists(userLists);
+                UserList userlist = userLists.stream()
+                        .filter(uls -> uls.getName().equals(listName))
+                        .findFirst()
+                        .get();
+
+                if (userlist != null) {
+                    Set<String> post = userlist.getPostId();
+                    post.remove(postId);
+                    if (!post.isEmpty()){
+                        user.setLists(userLists);
+                        return userService.updateUserLists(user);
+                    }else {
+                        userLists.remove(userlist);
+                        user.setLists(userLists);
+                        return userService.updateUserLists(user);
+                    }
+                }
+            }
+        } else {
+            return new ResponseApi(
+                    "Can't save the post right now",
+                    false
+            );
+        }
+        return new ResponseApi(
+                "Can't save the post right now",
+                false
+        );
+    }
+
+    public ResponseApi deleteListFromUser(String userId, String listName) {
+        User user = userService.isUserPresent(userId);
+        if (user != null) {
+            List<UserList> userLists = userService.getUserLists(userId).getBody();
+            if (userLists != null && !userLists.isEmpty()) {
+                List<UserList> newUserLists = userLists.stream().filter(ul -> !ul.getName().equals(listName)).toList();
+                user.setLists(newUserLists);
                 return userService.updateUserLists(user);
             }
         } else {

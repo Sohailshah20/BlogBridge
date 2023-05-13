@@ -3,11 +3,12 @@ package com.shah.blogbridge.user;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
+import java.util.Set;
 
 @Document
 public class UserList {
     private String name;
-    private List<String> postId;
+    private Set<String> postId;
     private String image;
 
     public String getName() {
@@ -18,11 +19,11 @@ public class UserList {
         this.name = name;
     }
 
-    public List<String> getPostId() {
+    public Set<String> getPostId() {
         return postId;
     }
 
-    public void setPostId(List<String> postId) {
+    public void setPostId(Set<String> postId) {
         this.postId = postId;
     }
 

@@ -19,8 +19,8 @@ public class HomeService {
         this.postRepository = postRepository;
     }
 
-    public ResponseEntity<List<Post>> getPostsForExplore(Integer pageNumber, Integer pageSize,String userId) {
-        Pageable pageable = PageRequest.of(pageNumber,pageSize);
+    public ResponseEntity<List<Post>> getPostsForExplore(Integer pageNumber,String userId) {
+        Pageable pageable = PageRequest.of(pageNumber,5);
         Page<Post> allPosts = postRepository.findAll(pageable);
         List<Post> posts = allPosts.getContent().stream()
                 .filter(post -> !post.getOwnerId().equals(userId))

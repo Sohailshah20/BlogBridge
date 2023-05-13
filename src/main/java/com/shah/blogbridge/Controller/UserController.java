@@ -127,22 +127,30 @@ public class UserController {
         return postInteractionService.putComment(postId,comment);
     }
 
-    @PostMapping("/list/add/{userId}/{postId}")
+    @PostMapping("/list/add/{postId}")
     public ResponseApi addToList(
             @PathVariable String postId,
-            @PathVariable String userIdId,
-            @RequestBody String listName
+            @RequestParam("userId") String userId,
+            @RequestParam(value = "listName", required = false) String listName
     ){
-        return postInteractionService.savePostToUserList(userIdId,postId,listName);
+        return postInteractionService.savePostToUserList(userId,postId,listName);
     }
 
-    @PutMapping("/list/remove/{userId}/{postId}")
+    @DeleteMapping("/list/delete/{postId}")
     public ResponseApi removeFromList(
             @PathVariable String postId,
-            @PathVariable String userIdId,
-            @RequestBody String listName
+            @RequestParam("userId") String userId,
+            @RequestParam("listName") String listName
     ){
-        return postInteractionService.unSavePostFromUserList(userIdId,postId,listName);
+        return postInteractionService.unSavePostFromUserList(userId,postId,listName);
+    }
+
+    @DeleteMapping("/list/{listName}")
+    public ResponseApi removeList(
+            @PathVariable String listName,
+            @RequestParam("userId") String userId
+    ){
+        return postInteractionService.deleteListFromUser(userId,listName);
     }
 
     @GetMapping("/myposts/{userId}")

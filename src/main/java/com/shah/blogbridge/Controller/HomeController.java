@@ -3,10 +3,7 @@ package com.shah.blogbridge.Controller;
 import com.shah.blogbridge.model.Post;
 import com.shah.blogbridge.service.HomeService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -21,23 +18,23 @@ public class HomeController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Post>> getExplorePosts(Integer pageNumber,
-                                                      Integer pageSize,
-                                                      String userId
+    public ResponseEntity<List<Post>> getExplorePosts(
+            @RequestParam(value = "pageNumber", required = false, defaultValue = "1") Integer pageNumber,
+            @RequestParam(value = "userId") String userId
     ) {
-        return homeService.getPostsForExplore(pageNumber,pageSize,userId);
+        return homeService.getPostsForExplore(pageNumber, userId);
 
     }
 
     @GetMapping("/gettoppicks")
-    public ResponseEntity<List<Post>> getTopPicks(){
+    public ResponseEntity<List<Post>> getTopPicks() {
         return homeService.getTopPicks();
     }
 
     @GetMapping("/{userId}")
     public ResponseEntity<List<Post>> getMoreFromUser(
             String userId,
-            @RequestBody String postId){
-        return homeService.getMoreFromUser(userId,postId);
+            @RequestBody String postId) {
+        return homeService.getMoreFromUser(userId, postId);
     }
 }
