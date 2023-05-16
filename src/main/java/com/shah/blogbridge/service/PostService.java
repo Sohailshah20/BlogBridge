@@ -7,6 +7,7 @@ import com.shah.blogbridge.repository.PostRepository;
 import com.shah.blogbridge.repository.UserRepository;
 import com.shah.blogbridge.user.User;
 import com.shah.blogbridge.user.UserList;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -36,9 +37,12 @@ public class PostService {
     }
 
     public ResponseEntity<List<Post>> getMyPosts(String userId) {
-        List<Post> posts = postRepository.findAllByOwnerIdOrderByTimeStampDesc(userId);
+        List<Post> posts = postRepository.findAllByOwnerId(userId);
         if (!posts.isEmpty()) {
-            return ResponseEntity.ok(posts);
+            List<Post> sortedPosts = posts.stream()
+                    .sorted(Comparator.comparing(Post::getTimeStamp).reversed())
+                    .toList();
+            return ResponseEntity.ok(sortedPosts);
         } else {
             return ResponseEntity.notFound().build();
         }

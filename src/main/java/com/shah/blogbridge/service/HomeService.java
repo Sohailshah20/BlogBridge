@@ -2,6 +2,8 @@ package com.shah.blogbridge.service;
 
 import com.shah.blogbridge.model.Post;
 import com.shah.blogbridge.repository.PostRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -29,18 +31,16 @@ public class HomeService {
     }
 
     public ResponseEntity<List<Post>> getTopPicks() {
-        Pageable pageable = PageRequest.of(1,3);
+        Pageable pageable = PageRequest.of(0,3);
         List<Post> topPosts = postRepository.findTop3ByOrderByVoteCountDesc();
         return ResponseEntity.ok(topPosts);
     }
 
     public ResponseEntity<List<Post>> getMoreFromUser(String userId,String postId) {
-        Pageable pageable = PageRequest.of(1,4);
-        List<Post> allPosts = postRepository.findByOwnerIdOrderByTimeStampDesc(userId,pageable);
+        List<Post> allPosts = postRepository.findTop3ByOwnerId(userId);
         List<Post> posts = allPosts.stream()
                 .filter(post -> !post.getPostId().equals(postId))
-                .limit(3)
-                .collect(Collectors.toList());
+                .toList();
         return ResponseEntity.ok(posts);
 
 

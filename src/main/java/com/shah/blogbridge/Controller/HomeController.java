@@ -19,7 +19,7 @@ public class HomeController {
 
     @GetMapping
     public ResponseEntity<List<Post>> getExplorePosts(
-            @RequestParam(value = "pageNumber", required = false, defaultValue = "1") Integer pageNumber,
+            @RequestParam(value = "pageNumber", required = false, defaultValue = "0") Integer pageNumber,
             @RequestParam(value = "userId") String userId
     ) {
         return homeService.getPostsForExplore(pageNumber, userId);
@@ -31,10 +31,10 @@ public class HomeController {
         return homeService.getTopPicks();
     }
 
-    @GetMapping("/{userId}")
+    @GetMapping("getmore/{userId}")
     public ResponseEntity<List<Post>> getMoreFromUser(
-            String userId,
-            @RequestBody String postId) {
+            @RequestParam("userId") String userId,
+            @RequestParam("postId") String postId) {
         return homeService.getMoreFromUser(userId, postId);
     }
 }
