@@ -23,9 +23,11 @@ public class UserService {
 
 
     private final UserRepository userRepository;
+    private final NotificationsService notificationsService;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, NotificationsService notificationsService) {
         this.userRepository = userRepository;
+        this.notificationsService = notificationsService;
     }
 
     public ResponseApi saveUser(User user) {
@@ -188,6 +190,7 @@ public class UserService {
             following.add(followingUserId);
             user.setFollowing(following);
             userRepository.save(user);
+            notificationsService.addFollowNotification(userId,user.getId(),user.getAvatar());
             return ResponseEntity.ok(new ResponseApi(
                     "user followed",
                     true

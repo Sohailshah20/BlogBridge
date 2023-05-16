@@ -14,18 +14,19 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class PostInteractionService {
 
     private final PostService postService;
+    private final NotificationsService notificationsService;
 
     private final PostRepository postRepository;
     private final UserService userService;
 
-    public PostInteractionService(PostService postService, PostRepository postRepository, UserService userService) {
+    public PostInteractionService(PostService postService, NotificationsService notificationsService, PostRepository postRepository, UserService userService) {
         this.postService = postService;
+        this.notificationsService = notificationsService;
         this.postRepository = postRepository;
         this.userService = userService;
     }
@@ -43,6 +44,7 @@ public class PostInteractionService {
                 post.setVoteCount(votesBy.size());
                 post.setVotesBy(votesBy);
                 postRepository.save(post);
+                notificationsService.addVoteNotification(postId, userId,user.getName(),user.getAvatar(),post.getTitle());
                 return ResponseEntity.ok(String.valueOf(post.getVoteCount()));
             } else {
                 return ResponseEntity.badRequest().body("user has already liked the post");
@@ -93,6 +95,7 @@ public class PostInteractionService {
             comments.add(comment);
             post.setComments(comments);
             postRepository.save(post);
+            notificationsService.addCommentNotification(postId, comment.getUserId(),user.getName(),user.getAvatar(),post.getTitle(),comment.getComment());
             return ResponseEntity.ok(comments);
         } else {
             return ResponseEntity.notFound().build();

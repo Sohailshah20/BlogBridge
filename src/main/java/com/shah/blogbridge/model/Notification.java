@@ -3,14 +3,25 @@ package com.shah.blogbridge.model;
 import java.time.LocalDateTime;
 
 public class Notification {
+    private String id;
     private String userId;
     private String username;
     private String avatar;
-    private String message;
     private String postId;
     private String postTitle;
+
+    private String message;
+
     private boolean isRead;
     private LocalDateTime createdAt;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getUserId() {
         return userId;
